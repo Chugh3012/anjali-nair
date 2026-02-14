@@ -35,6 +35,13 @@ let noButtonScale = 1;
 let yesButtonScale = 1;
 let moveDistance = 200;
 
+// Constants for animations
+const BASE_GLOW_INTENSITY = 0.4;
+const GLOW_INCREMENT = 0.1;
+const ACCELERATION_MULTIPLIER = 1.2;
+const MAX_ACCELERATION_ATTEMPTS = 5;
+const MIN_ANIMATION_SPEED = 0.15; // seconds
+
 // Text arrays for progressive changes
 const noButtonTexts = [
     "No",
@@ -102,7 +109,7 @@ function moveAwayFromCursor(e) {
     }
     
     // Increase glow intensity for "Yes" button
-    const glowIntensity = 0.4 + (noAttempts * 0.1);
+    const glowIntensity = BASE_GLOW_INTENSITY + (noAttempts * GLOW_INCREMENT);
     yesBtn.style.boxShadow = `0 5px 15px rgba(255, 20, 147, ${Math.min(glowIntensity, 1)})`;
     
     // Check if "No" button should disappear (10-12 attempts)
@@ -155,7 +162,7 @@ function moveAwayFromCursor(e) {
         
         // Make sure the new position is far from the cursor
         // Increase distance with each attempt (acceleration)
-        const minDistance = moveDistance * Math.pow(1.2, Math.min(noAttempts - 1, 5));
+        const minDistance = moveDistance * Math.pow(ACCELERATION_MULTIPLIER, Math.min(noAttempts - 1, MAX_ACCELERATION_ATTEMPTS));
         let attempts = 0;
         while (attempts < 10) {
             const distanceFromCursor = Math.sqrt(
@@ -177,7 +184,7 @@ function moveAwayFromCursor(e) {
         btn.style.top = newY + 'px';
         
         // Speed increases with each attempt
-        const speed = Math.max(0.1, 0.3 - (noAttempts * 0.02));
+        const speed = Math.max(MIN_ANIMATION_SPEED, 0.3 - (noAttempts * 0.02));
         btn.style.transition = `all ${speed}s ease`;
         
         setTimeout(() => {

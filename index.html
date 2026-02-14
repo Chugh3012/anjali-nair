@@ -13,6 +13,12 @@
     <!-- Floating hearts background -->
     <div class="hearts-container" id="heartsContainer"></div>
     
+    <!-- Attempt counter display -->
+    <div class="attempt-counter" id="attemptCounter" style="display: none;">
+        <span id="counterText">Attempts: 0</span>
+        <div class="counter-message" id="counterMessage"></div>
+    </div>
+    
     <!-- Main content -->
     <div class="container">
         <div class="content">
@@ -26,6 +32,9 @@
                 <button id="yesBtn" class="btn yes-btn">Yes! 💕</button>
                 <button id="noBtn" class="btn no-btn">No</button>
             </div>
+            
+            <!-- Tooltip for No button -->
+            <div class="no-tooltip" id="noTooltip"></div>
         </div>
     </div>
 

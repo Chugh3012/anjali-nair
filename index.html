@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Question 💕</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Floating hearts background -->
+    <div class="hearts-container" id="heartsContainer"></div>
+    
+    <!-- Main content -->
+    <div class="container">
+        <div class="content">
+            <h1 class="main-title">💖 A Special Question 💖</h1>
+            <div class="question-box">
+                <h2 class="question">Will you be my wife?</h2>
+                <div class="emoji">💍</div>
+            </div>
+            
+            <div class="buttons-container">
+                <button id="yesBtn" class="btn yes-btn">Yes! 💕</button>
+                <button id="noBtn" class="btn no-btn">No</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for success message -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <h2>🎉 Congratulations! 🎉</h2>
+            <p>You are my wife already! 💕</p>
+            <p class="sub-message">I love you so much! ❤️</p>
+            <div class="celebration-emoji">💑 💐 💝 🎊</div>
+        </div>
+    </div>
+
+    <!-- Confetti canvas -->
+    <canvas id="confettiCanvas"></canvas>
+
+    <script src="script.js"></script>
+</body>
+</html>

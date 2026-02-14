@@ -2,19 +2,27 @@
 function createFloatingHearts() {
     const container = document.getElementById('heartsContainer');
     const heartEmojis = ['💕', '💖', '💗', '💝', '💓', '💞', '❤️', '🧡', '💛', '💚', '💙', '💜'];
+    const maxHearts = 30;
     
     setInterval(() => {
+        // Limit the number of hearts to prevent unbounded DOM growth
+        if (container.children.length >= maxHearts) {
+            return;
+        }
+        
         const heart = document.createElement('div');
         heart.className = 'heart';
         heart.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
         heart.style.left = Math.random() * 100 + '%';
-        heart.style.animationDuration = (Math.random() * 5 + 5) + 's';
+        const duration = Math.random() * 3 + 5;
+        heart.style.animationDuration = duration + 's';
         heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
         container.appendChild(heart);
         
+        // Remove heart after its animation completes
         setTimeout(() => {
             heart.remove();
-        }, 8000);
+        }, duration * 1000);
     }, 300);
 }
 
@@ -248,6 +256,3 @@ modal.addEventListener('click', (e) => {
 
 // Initialize floating hearts
 createFloatingHearts();
-
-// Add some fun console message
-console.log('%c💕 Welcome to a special place! 💕', 'color: #ff1493; font-size: 20px; font-weight: bold;');

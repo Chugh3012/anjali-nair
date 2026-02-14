@@ -28,10 +28,103 @@ function createFloatingHearts() {
 
 // No button - runs away from cursor
 const noBtn = document.getElementById('noBtn');
+const yesBtn = document.getElementById('yesBtn');
 let isNoBtnMoving = false;
+let noAttempts = 0;
+let noButtonScale = 1;
+let yesButtonScale = 1;
+let moveDistance = 200;
+
+// Text arrays for progressive changes
+const noButtonTexts = [
+    "No",
+    "Are you sure?",
+    "Really?",
+    "Think again! 🤔",
+    "But why? 😢",
+    "Please reconsider! 💔",
+    "This is a mistake! 😭",
+    "My heart... 💔"
+];
+
+const yesButtonTexts = [
+    "Yes! 💕",
+    "YES!! 💕💕",
+    "YES!!! 💕💕💕",
+    "YESSS!!!! 💕💕💕💕"
+];
+
+const tooltipMessages = [
+    "Wrong button! ❌",
+    "Nope, try again! 😊",
+    "You sure about that? 🤔",
+    "Come on now... 💕",
+    "The other button is better! ✨"
+];
+
+const counterMessages = {
+    3: "Still trying? 🤨",
+    5: "You've tried 5 times... we both know the answer! 💕",
+    7: "Come on now... just say yes! 😊",
+    10: "This is getting silly! 😄"
+};
 
 function moveAwayFromCursor(e) {
     if (isNoBtnMoving) return;
+    
+    // Increment attempts counter
+    noAttempts++;
+    
+    // Update attempt counter display
+    updateAttemptCounter();
+    
+    // Show tooltip
+    showTooltip(e.clientX, e.clientY);
+    
+    // Update "No" button scale (shrink by 10% each time, minimum 30%)
+    noButtonScale = Math.max(0.3, 1 - (noAttempts * 0.1));
+    noBtn.style.transform = `scale(${noButtonScale})`;
+    
+    // Update "Yes" button scale (grow by 5% each time)
+    yesButtonScale = 1 + (noAttempts * 0.05);
+    yesBtn.style.transform = `scale(${yesButtonScale})`;
+    
+    // Update "No" button text
+    const textIndex = Math.min(noAttempts - 1, noButtonTexts.length - 1);
+    if (textIndex >= 0) {
+        noBtn.textContent = noButtonTexts[textIndex];
+    }
+    
+    // Update "Yes" button text
+    const yesTextIndex = Math.min(Math.floor(noAttempts / 3), yesButtonTexts.length - 1);
+    if (yesTextIndex >= 0) {
+        yesBtn.textContent = yesButtonTexts[yesTextIndex];
+    }
+    
+    // Increase glow intensity for "Yes" button
+    const glowIntensity = 0.4 + (noAttempts * 0.1);
+    yesBtn.style.boxShadow = `0 5px 15px rgba(255, 20, 147, ${Math.min(glowIntensity, 1)})`;
+    
+    // Check if "No" button should disappear (10-12 attempts)
+    if (noAttempts >= 10) {
+        noBtn.classList.add('fade-out');
+        setTimeout(() => {
+            noBtn.style.display = 'none';
+            yesBtn.classList.add('center-yes');
+            
+            // Show special message
+            const counterMessage = document.getElementById('counterMessage');
+            counterMessage.textContent = "There was never really a choice! 💖";
+            counterMessage.style.fontSize = '1.5em';
+            counterMessage.style.color = '#ff1493';
+            
+            // Auto-celebrate after 2 seconds
+            setTimeout(() => {
+                yesBtn.click();
+            }, 2000);
+        }, 1000);
+        return;
+    }
     
     const btn = noBtn;
     const btnRect = btn.getBoundingClientRect();
@@ -61,7 +154,8 @@ function moveAwayFromCursor(e) {
         let newY = Math.random() * maxY;
         
         // Make sure the new position is far from the cursor
-        const minDistance = 200;
+        // Increase distance with each attempt (acceleration)
+        const minDistance = moveDistance * Math.pow(1.2, Math.min(noAttempts - 1, 5));
         let attempts = 0;
         while (attempts < 10) {
             const distanceFromCursor = Math.sqrt(
@@ -81,12 +175,45 @@ function moveAwayFromCursor(e) {
         btn.style.position = 'fixed';
         btn.style.left = newX + 'px';
         btn.style.top = newY + 'px';
-        btn.style.transition = 'all 0.3s ease';
+        
+        // Speed increases with each attempt
+        const speed = Math.max(0.1, 0.3 - (noAttempts * 0.02));
+        btn.style.transition = `all ${speed}s ease`;
         
         setTimeout(() => {
             isNoBtnMoving = false;
-        }, 300);
+        }, speed * 1000);
     }
+}
+
+// Update attempt counter display
+function updateAttemptCounter() {
+    const counter = document.getElementById('attemptCounter');
+    const counterText = document.getElementById('counterText');
+    const counterMessage = document.getElementById('counterMessage');
+    
+    counter.style.display = 'block';
+    counterText.textContent = `Attempts: ${noAttempts}`;
+    
+    // Show special messages at certain attempt counts
+    if (counterMessages[noAttempts]) {
+        counterMessage.textContent = counterMessages[noAttempts];
+    }
+}
+
+// Show tooltip near cursor
+function showTooltip(x, y) {
+    const tooltip = document.getElementById('noTooltip');
+    const randomMessage = tooltipMessages[Math.floor(Math.random() * tooltipMessages.length)];
+    
+    tooltip.textContent = randomMessage;
+    tooltip.style.left = (x + 20) + 'px';
+    tooltip.style.top = (y - 40) + 'px';
+    tooltip.classList.add('show');
+    
+    setTimeout(() => {
+        tooltip.classList.remove('show');
+    }, 1500);
 }
 
 // Add event listeners for no button
@@ -105,7 +232,6 @@ noBtn.addEventListener('click', (e) => {
 });
 
 // Yes button - show celebration
-const yesBtn = document.getElementById('yesBtn');
 const modal = document.getElementById('successModal');
 const canvas = document.getElementById('confettiCanvas');
 const ctx = canvas.getContext('2d');
